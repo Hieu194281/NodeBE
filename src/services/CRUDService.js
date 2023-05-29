@@ -37,15 +37,53 @@ let hashUserpassword = (password) => {
 let getAllUser = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      let users = db.User.findAll();
+      let users = await db.User.findAll();
       resolve(users);
     } catch (e) {
       reject(e);
     }
   });
 };
-
+let getUserInfobyId = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({
+        where: { id: userId },
+        raw: true,
+      });
+      if (user) {
+        resolve(user);
+      } else {
+        resolve({});
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+let updateUserdata = (userdata) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({
+        where: { id: userdata.id },
+      });
+      if (user) {
+        user.firstName = userdata.firstName;
+        user.lastName = userdata.lastName;
+        user.address = userdata.address;
+        await user.save();
+        resolve();
+      } else {
+        resolve();
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 module.exports = {
   createNewUser,
   getAllUser,
+  getUserInfobyId,
+  updateUserdata,
 };
